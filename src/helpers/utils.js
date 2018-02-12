@@ -26,3 +26,13 @@ export const isWeixin = () => {
     return false;
   }
 }
+
+const contextPath = (function () {
+  let pathName = window.location.pathname
+  let pathAry = pathName.split('/')
+  if (pathAry.length > 2) {
+    return pathAry[1]
+  } else {
+    return ''
+  }
+})()

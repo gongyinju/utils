@@ -1,3 +1,4 @@
+import Axios from 'axios' // 处理http请求
 class File {
   constructor() {
     this.defaultAllowList = new Array("jpg","png","jpeg","txt","xls","doc","docx","xlsx","pdf","JPG","PNG","JPEG","TXT","XLS","DOC","DOCX","XLSX","PDF");
@@ -66,7 +67,7 @@ class File {
    * @param data  带数据的上传
    * @param url 上传地址
    */
-  upload(fileToUpload,data,url){
+  upload(fileToUpload,data = {},url){
     var fd = new FormData();
     fd.append("file",fileToUpload);
     if(typeof data === "object"){
@@ -74,59 +75,39 @@ class File {
         fd.append(key,data[key]);
       }
     }
-
     var uploadURL;
     if(url != undefined){
       uploadURL = url;
     }else if(typeof getUploadURL == 'function'){
       uploadURL = getUploadURL();
     }
-
     if(uploadURL == undefined){
       throw new Error("未定义的上传文件地址, 请通过公共函数getUploadURL来定义上传地址.");
     }else{
-      // var defer = $.Deferred();
-      /*$.ajax({
-        type: 'POST',
-        url: uploadURL,
-        async: true,
-        data:fd,
-        cache:false,
-        timeout:30000,
-        processData:false,
-        contentType:false,
-        success: function (ajaxData) {
-          try{
-            var retData =  JSON.parse(ajaxData);
-            if(retData["ESPRESSO_RETURN_VERSION"]){
-              if(retData.status === "001"||retData.status === "002"||retData.status === "003"){
+      let P = new Promise(function(resolve, reject){
+        Axios.post(uploadURL,fd)
+          .then((res)=>{
+            //目前假的---200
+            console.log(res)
+            // var retData =  JSON.parse(res.data);
+            var retData = res.data;
+            if(retData["ESPRESSO_RETURN_VERSION"]) {
+              if (retData.status === "001" || retData.status === "002" || retData.status === "003") {
                 retData.retCode = '400';
-              }else
+              } else{
                 retData = retData.data;
+              }
             }
-            defer.resolve(retData);
-          }catch(e){
-            defer.resolve({
-              status:"400",
-              retCode:"400",
-              retMsg:ajaxData
-            });
-            throw new Error(ajaxData);
-          }
-        },
-        error: function(xhr,status,error){
-          defer.resolve({
-            status:"400",
-            retCode:"400",
-            retMsg:error.message != undefined ? error.message : error
+            resolve(retData);
+          })
+          .catch((error)=>{
+            console.log(error);
+            reject(error);
           });
-          throw new Error(error.message != undefined ? error.message : error);
-        }*/
-      // });
-      return defer.promise();
+      });
+      return P;
     }
   }
-
 }
 
 export const file = new File();
