@@ -45,131 +45,29 @@ export const isArray =  (obj) => {
 export const isArrayLike =  obj => {
   return !!(isArray(obj) || obj.length);
 };
+/**
+ * 日期格式化
+ * */
+Date.prototype.format = fmt => {
+    var o = {
+        "M+":this.getMonth()+1,// 月份
+        "d+":this.getDate(), //日期
+        "H+":this.getHours(),  //小时
+        "m+":this.getMinutes(), //分
+        "s+":this.getSeconds(), //秒,
+        "q+":Math.floor((this.getMonth()+3)/3),//季度
+        "S+":this.getMilliseconds() //毫秒
+    },k;
+    if(!fmt) fmt = "yyyy-MM-dd";
+    if(/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length));
+    for(k in o)
+        if (new RegExp("("+k+")").test(fmt))
+            fmt = fmt.replace(RegExp.$1,(RegExp.$1.length == 1)?(o[k]):(('00' + o[k]).substr((""+o[k]).length)));
+    return fmt;
+};
 
 
-/**
- *
- * @param str
- * @returns {*|{dist}|XML|{example, overwrite, disable_template_processing}|void|string}
- */
-export const trim =  str => {
-  return str.replace(/(^\s*)|(\s*$)/g, '');
-};
-if(!Array.prototype.trim){
-    Array.prototype.trim = function () {
-        return trim(this)
-    }
-}
-/**
- * 迭代器，用来兼容IE8-的数组迭代
- * @returns {boolean}
- * @param array
- * @param fn
- */
-export const forEach =  (array,fn) => {
-  if(s3.isArrayLike(array)){
-    for(let i=0;i<array.length;i++){
-      fn(array[i],i)
-    }
-  }else{
-    throw new Error('请传入正确的参数');
-  }
-};
-if(!Array.prototype.forEach){
-    Array.prototype.forEach = function (fn) {
-        return forEach(this,fn)
-    }
-}
 
-/**
- *
- * @param array
- * @param fn
- * @returns {Array}
- */
-
-export const filter =  (array,fn) => {
-  if(isArrayLike(array)){
-    var newAry = [];
-    for(let i = 0;i<array.length;i++){
-      if(fn(array[i]),i)
-        newAry.push(array[i]);
-    }
-    return newAry;
-  }
-};
-if(!Array.prototype.filter){
-    Array.prototype.filter = function (fn) {
-        return filter(this,fn)
-    }
-}
-/**
- * 数组函数，对每一个元素执行fn 只要一个返回真，则为真
- * @param array
- * @param fn
- * @returns {boolean}
- */
-export const some =  (array,fn) => {
-  if(isArrayLike(array)){
-    var i;
-    for(i=0;i<array.length;i++){
-      if(fn(array[i],i))
-        return true;
-    }
-    return false;
-  }else{
-    throw new Error('请传入正确的参数');
-  }
-};
-if(!Array.prototype.some){
-    Array.prototype.some = function (fn) {
-        return some(this,fn)
-    }
-}
-
-/**
- * 数组函数，对每一个元素执行fn 只要一个返回真，则为真
- * @param array
- * @param fn
- * @returns {boolean}
- */
-export const every =  (array,fn) => {
-  if(isArrayLike(array)){
-    for(let i=0;i<array.length;i++){
-      if(!fn(array[i],i))
-        return false;
-    }
-    return true;
-  }else{
-    throw new Error('请传入正确的参数');
-  }
-};
-if(!Array.prototype.every){
-    Array.prototype.every = function (fn) {
-        return every(this,fn)
-    }
-}
-/**
- * 重定义array.map
- * @param array
- * @param fn
- * @returns {Array}
- */
-export const map = function(array,fn){
-  if(isArrayLike(array)){
-    var newAry = [];
-    for(let i =0;i<array.length;i++){
-      newAry.push(fn(array[i],i));
-    }
-    return newAry;
-  }else{
-    throw new Error('请传入正确参数');
-  }
-};
-if(!Array.prototype.map){
-    Array.prototype.map = function (fn) {
-        return map(this,fn)
-    }
-}
 
 

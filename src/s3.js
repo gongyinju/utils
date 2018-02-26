@@ -1,10 +1,10 @@
 
 import {isWeixin,isPlainObject,map,isArray,isArrayLike,every,some,filter,trim,forEach} from './helpers/utils'
 import {setItem,getItem,removeItem,setItemLocal,getItemLocal,removeItemLocal} from './helpers/istore'
+import {ajax,setURL,ajaxChain} from "./helpers/ajax";
 import {debounce,throttle} from "./helpers/underscore";
 import {timeout,interval} from "./helpers/timer";
 import {ABCSort,groupSort} from "./helpers/sort";
-import {ajax} from "./helpers/ajax";
 import {file} from "./helpers/file";
 import './helpers/calculartor'
 
@@ -23,11 +23,11 @@ const contextPath = (function () {
 export default {
   isWeixin,isPlainObject,map,isArray,isArrayLike,every,some,filter,trim,forEach,
   setItem,getItem,removeItem,setItemLocal,getItemLocal,removeItemLocal,
+  ajax,setURL,ajaxChain,
   debounce,throttle,
   ABCSort,groupSort,
   timeout,interval,
   contextPath,
   version,
-  ajax,
   file,
 }

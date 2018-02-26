@@ -8,6 +8,6 @@ describe("iStorage", () => {
 
     it("localStorage", () => {
         s3.setItemLocal('type','local');
-        expect(s3.getItemLocal('type')).to.be.equal('"local"');
+        expect(s3.getItemLocal('type')).to.be.equal("local");
     });
 })

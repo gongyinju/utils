@@ -1,6 +1,6 @@
 {
-  "name": "s3_demo",
-  "version": "1.0.0",
+  "name": "gyj_s3",
+  "version": "1.0.1",
   "description": "",
   "main": "src/s3.js",
   "scripts": {
