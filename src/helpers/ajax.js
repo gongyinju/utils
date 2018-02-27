@@ -1,67 +1,17 @@
 import Axios from 'axios'; // 处理http请求
 // Axios.defaults.baseURL = '';
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-//封装请求数据的对象方法
-/*class Ajax {
-  get(url){
-    // 通过Promise完成异步操作，将数据进行初步处理输出为Json对象
-    var P = new Promise(function(resolve, reject){
-      Axios.get(url)
-        .then((res)=>{
-              //判断后台返回状态码，作出相应行为
-              switch(res.status){
-                case 0:
-                  Notification({
-                    title : '错误提示',
-                    message : res.data.message,
-                    type : 'error'
-                  });
-                  break;
-                default:
-              resolve(res.data);
-              break;
-          }
-        }).catch((error)=>{
-        console.log(error)
-        reject(error);
-      });
-    });
-    return P
-  }
-  post(url){
-    var P = new Promise(function(resolve, reject){
-      Axios.post(url,parma={})
-        .then((res)=>{
-          console.log(res.data)
-          switch(res.status){
-            case 0:
-              Notification({
-                title : '错误提示',
-                message : res.data.message,
-                type : 'error'
-              });
-              break;
-            default:
-              resolve(res.data.data);
-              break;
-          }
-        }).catch((error)=>{
-        console.log(error)
-        reject(error);
-      });
-    });
-    return P
-  }
-}*/
-var submitUrl;
+Axios.defaults.timeout = 2500;
+
+var submitUrl,baseURL='https://www.test.com/api/';
 /**
  * ajax方法，通用
- * @param {String} bean
+ * @param {String} id
  * @param {String} param
  * @param {String} appid
  * @param {String} method
  */
-export const ajax = (bean,param={},appid,method='post') => {
+export const ajax = (id,param={},appid=contextPath(),method='post',timeout) => {
     submitUrl = getURL();
     if(!submitUrl)
         return undefined;
@@ -71,14 +21,15 @@ export const ajax = (bean,param={},appid,method='post') => {
     }catch(e){
         headers = {};
     }
-    //paramStr = CoreSupport.dataSetIdList + '=' + encodeURIComponent(id) + '&' + CoreSupport.dataSetParams + '=' + encodeURIComponent(JSON.stringify(paramObj)) + '&__appId=' + encodeURIComponent(appid) + '&__code=' + encodeURIComponent("");
+    let url = `${baseURL}${appid}/${id}`;
 
     if (method == 'post'){
         let P = new Promise(function(resolve, reject){
-            console.log(submitUrl);
-            console.log(param)
-
-            Axios.post(submitUrl,param)
+            console.log(url);
+            let con = {};
+            timeout ? con = {param,timeout}: con = {param};
+            console.log(con)
+            Axios.post(url,con)
                 .then((res)=>{
                     console.log(res);
                     var retData =  res;
@@ -103,7 +54,7 @@ export const ajax = (bean,param={},appid,method='post') => {
 
     }else if (method == 'get'){
         let P = new Promise(function(resolve, reject){
-            Axios.get(submitUrl,{params:param})
+            Axios.get(url,{params:param})
                 .then((res)=>{
                     console.log(res);
                     var retData =  res;
@@ -142,9 +93,12 @@ export const setURL = url => {
  * @returns {*}
  */
 const getURL = () => {
+
+    console.log(getSubmitURL())
     if(submitUrl){
         return submitUrl;
     }else if(typeof getSubmitURL === 'function'){
+        console.log(getSubmitURL())
         return getSubmitURL();
     }else {
         throw new Error("Undefined getSubmitURL。未定义的ajax提交地址 请通过公共函数getSubmitURL来定义ajax的提交地址.");
@@ -163,7 +117,7 @@ export const  ajaxChain = (arr,resultBefore) => {
             var currentFunc = arr.shift();
             return execute(currentFunc,resultBefore).then(function(resultBefore){
                 if(arr.length > 0){
-                    recursiveAjax(arr,resultBefore);
+                    ajaxChain(arr,resultBefore);
                 }
             });
         }

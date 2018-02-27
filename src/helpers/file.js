@@ -87,10 +87,8 @@ class File {
       let P = new Promise(function(resolve, reject){
         Axios.post(uploadURL,fd)
           .then((res)=>{
-            //目前假的---200
-            console.log(res)
             // var retData =  JSON.parse(res.data);
-            var retData = res.data;
+            var retData = res;
             if(retData["ESPRESSO_RETURN_VERSION"]) {
               if (retData.status === "001" || retData.status === "002" || retData.status === "003") {
                 retData.retCode = '400';
